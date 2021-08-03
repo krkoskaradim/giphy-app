@@ -9,8 +9,10 @@ export interface GiphyItemProps {
 export const GiphyItem = (props: GiphyItemProps): JSX.Element => {
     const { gifData } = props;
     return (
-        <Card>
-            {gifData.id}
+        <Card
+            cover={<img src={gifData.images.original.url} alt={gifData.title} />}
+        >
+            {gifData.title}
         </Card>
     );
 };
