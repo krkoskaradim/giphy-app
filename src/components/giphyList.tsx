@@ -7,13 +7,15 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { useGiphyClient } from '../contexts/giphyClientContext';
 import { GiphyItem } from './giphyItem';
 import * as config from '../config/default';
+import { Rating } from './giphyRatingFilter';
 
 export interface GiphyListProps {
     keyword: string
+    rating: Rating
 }
 
 export const GiphyList = (props: GiphyListProps): JSX.Element => {
-    const { keyword } = props;
+    const { keyword, rating } = props;
     const { giphyApiClient } = useGiphyClient();
 
     const [response, setResponse] = useState<MultiResponse>();
@@ -25,7 +27,7 @@ export const GiphyList = (props: GiphyListProps): JSX.Element => {
         setGifsData([]);
         setOffset(0);
         setIsLoading(true);
-    }, [keyword]);
+    }, [keyword, rating]);
 
     useEffect(() => {
         (async (): Promise<void> => {
@@ -34,7 +36,7 @@ export const GiphyList = (props: GiphyListProps): JSX.Element => {
                     q: keyword,
                     limit: config.giphy.list.itemsPerPage,
                     offset,
-                    rating: 'g',
+                    rating,
                 });
                 setResponse(giphyResponse);
                 setGifsData(gifsData.concat(giphyResponse?.data || []));
