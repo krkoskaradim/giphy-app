@@ -27,7 +27,9 @@
         }
     },
     "rules": {
+        "indent": ["error", 4],
         "react/jsx-indent": ["error", 4],
+        "react/jsx-indent-props": ["error", 4],
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
         "react/jsx-filename-extension": [ "warn", {"extensions": [".tsx"]} ],
@@ -36,7 +38,9 @@
             "ignorePackages",
             {
                 "ts": "never",
-                "tsx": "never"
+                "tsx": "never",
+                "js": "never",
+                "jsx": "never"
             }
         ],
         "no-shadow": "off",
