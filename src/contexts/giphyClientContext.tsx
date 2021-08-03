@@ -39,7 +39,7 @@ export const GiphyClientContextProvider = (props: GiphyClientContextProviderProp
                 setState({ error, isLoading: false });
             }
         })();
-    });
+    }, []);
 
     return (
         <GiphyClientContext.Provider value={state}>

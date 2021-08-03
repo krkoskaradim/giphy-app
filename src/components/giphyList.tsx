@@ -1,37 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Row, Spin } from 'antd';
-import { MultiResponse } from 'giphy-api';
+import {
+    Col, Result, Row, Spin,
+} from 'antd';
+import { GIFObject, MultiResponse } from 'giphy-api';
+import InfiniteScroll from 'react-infinite-scroller';
 import { useGiphyClient } from '../contexts/giphyClientContext';
 import { GiphyItem } from './giphyItem';
+import * as config from '../config/default';
 
 export const GiphyList = (): JSX.Element => {
-    const { giphyApiClient, error, isLoading } = useGiphyClient();
-    const [data, setData] = useState<MultiResponse>();
+    const { giphyApiClient } = useGiphyClient();
+    const [response, setResponse] = useState<MultiResponse>();
+    const [gifsData, setGifsData] = useState<GIFObject[]>([]);
+    const [offset, setOffset] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (!isLoading) {
-            (async (): Promise<void> => {
-                const giphyResponse = await giphyApiClient?.search('test');
-                setData(giphyResponse);
-            })();
-        }
+        (async (): Promise<void> => {
+            if (isLoading) {
+                const giphyResponse = await giphyApiClient?.search({
+                    q: 'test',
+                    limit: config.giphy.list.itemsPerPage,
+                    offset,
+                    rating: 'g',
+                });
+                setResponse(giphyResponse);
+                setGifsData(gifsData.concat(giphyResponse?.data || []));
+                setIsLoading(false);
+            }
+        })();
     }, [isLoading]);
 
-    if (isLoading) {
+    if (!response && isLoading) {
         return (
-            <Spin spinning size="large" />
+            <Spin spinning />
         );
     }
 
+    if (!response) {
+        return (
+            <Result status="404" />
+        );
+    }
+
+    const { pagination } = response;
+
     return (
         <>
-            <Row gutter={16}>
-                {data?.data.map((gifData) => (
-                    <Col span={8} key={gifData.id}>
-                        <GiphyItem gifData={gifData} />
-                    </Col>
-                ))}
-            </Row>
+            <InfiniteScroll
+                initialLoad={false}
+                pageStart={0}
+                hasMore={((pagination.offset + pagination.count) < pagination.total_count) && !isLoading}
+                loadMore={() => { setOffset(offset + config.giphy.list.itemsPerPage); setIsLoading(true); }}
+                loader={(<Spin key="giphyListLoader" size="large" spinning />)}
+            >
+                <Row gutter={16}>
+                    {gifsData.map((gifData) => (
+                        <Col span={8} key={gifData.id}>
+                            <GiphyItem gifData={gifData} />
+                        </Col>
+                    ))}
+                </Row>
+            </InfiniteScroll>
         </>
     );
 };
