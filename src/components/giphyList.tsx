@@ -8,18 +8,30 @@ import { useGiphyClient } from '../contexts/giphyClientContext';
 import { GiphyItem } from './giphyItem';
 import * as config from '../config/default';
 
-export const GiphyList = (): JSX.Element => {
+export interface GiphyListProps {
+    keyword: string
+}
+
+export const GiphyList = (props: GiphyListProps): JSX.Element => {
+    const { keyword } = props;
     const { giphyApiClient } = useGiphyClient();
+
     const [response, setResponse] = useState<MultiResponse>();
     const [gifsData, setGifsData] = useState<GIFObject[]>([]);
     const [offset, setOffset] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        setGifsData([]);
+        setOffset(0);
+        setIsLoading(true);
+    }, [keyword]);
+
+    useEffect(() => {
         (async (): Promise<void> => {
             if (isLoading) {
                 const giphyResponse = await giphyApiClient?.search({
-                    q: 'test',
+                    q: keyword,
                     limit: config.giphy.list.itemsPerPage,
                     offset,
                     rating: 'g',

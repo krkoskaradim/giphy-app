@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Spin } from 'antd';
 import { useGiphyClient } from '../contexts/giphyClientContext';
 import { GiphyList } from './giphyList';
+import { GiphyKeywordInput } from './giphyKeywordInput';
 
 export const GiphyViewer = (): JSX.Element => {
     const { isLoading, error } = useGiphyClient();
-    console.log('test');
+    const [keyword, setKeyword] = useState<string>('');
     if (isLoading) {
         return (
             <Spin spinning />
@@ -13,6 +14,9 @@ export const GiphyViewer = (): JSX.Element => {
     }
 
     return (
-        <GiphyList />
+        <>
+            <GiphyKeywordInput setValue={setKeyword} />
+            <GiphyList keyword={keyword} />
+        </>
     );
 };
