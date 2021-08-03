@@ -22,7 +22,7 @@ export const GiphyRatingFilter = (props: GiphyRatingFilterProps): JSX.Element =>
             onChange={onChange}
         >
             {options.map((option): JSX.Element => (
-                <Select.Option value={option}>{option}</Select.Option>
+                <Select.Option key={option} value={option}>{option}</Select.Option>
             ))}
         </Select>
     );
