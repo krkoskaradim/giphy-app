@@ -1,9 +1,10 @@
 import React from 'react';
+import { GiphyViewer } from './components/giphyViewer';
 
 const App = (): JSX.Element => (
-    <h1>
-        Hello World
-    </h1>
+    <>
+        <GiphyViewer />
+    </>
 );
 
 export default App;
